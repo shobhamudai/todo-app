@@ -1,18 +1,26 @@
 package com.example.controller;
 
-import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.example.model.Todo;
 import com.example.service.TodoService;
 import com.google.gson.Gson;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.HashMap;
 import java.util.Map;
 
+@Singleton
 public class TodoController {
 
-    private final TodoService todoService = new TodoService();
-    private final Gson gson = new Gson();
+    private final TodoService todoService;
+    private final Gson gson;
+
+    @Inject
+    public TodoController(TodoService todoService, Gson gson) {
+        this.todoService = todoService;
+        this.gson = gson;
+    }
 
     public APIGatewayProxyResponseEvent getAllTodos() {
         return createResponse(200, gson.toJson(todoService.getAllTodos()));

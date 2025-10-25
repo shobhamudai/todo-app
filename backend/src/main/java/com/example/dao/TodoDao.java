@@ -4,15 +4,23 @@ import com.example.model.Todo;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.dynamodb.model.*;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Singleton
 public class TodoDao {
 
-    private final DynamoDbClient dynamoDbClient = DynamoDbClient.builder().build();
+    private final DynamoDbClient dynamoDbClient;
     private final String tableName = System.getenv("TABLE_NAME");
+
+    @Inject
+    public TodoDao(DynamoDbClient dynamoDbClient) {
+        this.dynamoDbClient = dynamoDbClient;
+    }
 
     public List<Todo> getAllTodos() {
         ScanRequest scanRequest = ScanRequest.builder().tableName(tableName).build();
