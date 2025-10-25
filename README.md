@@ -16,14 +16,14 @@ Here is a summary of the commands for setting up and updating your application.
    4. Build backend:
       * Run: mvn clean package
 5. Deploy the Application Stack:
-       * In the cdk directory, run: cdk deploy --require-approval never
-       * Note down the s3 bucket name, cloud distribution name, Api-gateway URL  
+   * In the cdk directory, run: cdk deploy --require-approval never
+   * Note down the s3 bucket name, cloud distribution name, Api-gateway URL  
 6. Build and Deploy the Frontend:
       * Replace Api-gateway URl in API_URL in App.js file
       * Navigate to the frontend directory: cd ../frontend
       * Install dependencies: npm install
       * Build the application: npm run build
-      * Deploy to S3: aws s3 sync build s3://<insert S3 bucket name here created during cdk deploy>
+      * Deploy to S3: aws s3 sync build s3://{insert S3 bucket name here created during cdk deploy}
 
 
  # Updating the Application
@@ -40,8 +40,8 @@ Here is a summary of the commands for setting up and updating your application.
        * Navigate to the frontend directory: cd frontend
        * Run: npm run build
    2. Deploy the frontend to S3:
-       * In the frontend directory, run: aws s3 sync build s3://<insert S3 bucket name here created during cdk deploy>
+       * In the frontend directory, run: aws s3 sync build s3://{insert S3 bucket name here created during cdk deploy}
    3. Invalidate the CloudFront cache:
-       * Run: aws cloudfront create-invalidation --distribution-id <insert cloudfront distribution name here created during cdk deploy> --paths "/*"
+       * Run: aws cloudfront create-invalidation --distribution-id {insert cloudfront distribution name here created during cdk deploy} --paths "/*"
   Please replace the bucket name and distribution ID with the actual values from your CDK stack outputs if they are different.
 
