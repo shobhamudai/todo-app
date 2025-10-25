@@ -4,12 +4,14 @@ import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent
 import com.example.model.TodoBO;
 import com.example.service.TodoService;
 import com.google.gson.Gson;
+import lombok.extern.log4j.Log4j2;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.HashMap;
 import java.util.Map;
 
+@Log4j2
 @Singleton
 public class TodoController {
 
@@ -20,24 +22,28 @@ public class TodoController {
     public TodoController(TodoService todoService, Gson gson) {
         this.todoService = todoService;
         this.gson = gson;
+        log.info("TodoController initialized.");
     }
 
     public APIGatewayProxyResponseEvent getAllTodos() {
+        log.info("Controller: Fetching all todos.");
         return createResponse(200, gson.toJson(todoService.getAllTodos()));
     }
 
     public APIGatewayProxyResponseEvent addTodo(String json) {
+        log.info("Controller: Adding new todo.");
         TodoBO todo = gson.fromJson(json, TodoBO.class);
         return createResponse(201, gson.toJson(todoService.addTodo(todo)));
     }
 
     public APIGatewayProxyResponseEvent updateTodo(String id, String json) {
+        log.info("Controller: Updating todo with ID: {}", id);
         TodoBO todo = gson.fromJson(json, TodoBO.class);
-        todoService.updateTodo(id, todo);
-        return createResponse(200, gson.toJson(todo));
+        return createResponse(200, gson.toJson(todoService.updateTodo(id, todo)));
     }
 
     public APIGatewayProxyResponseEvent deleteTodo(String id) {
+        log.info("Controller: Deleting todo with ID: {}", id);
         todoService.deleteTodo(id);
         return createResponse(204, "");
     }

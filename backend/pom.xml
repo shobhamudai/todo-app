@@ -13,7 +13,8 @@
         <maven.compiler.target>17</maven.compiler.target>
         <dagger.version>2.44</dagger.version>
         <lombok.version>1.18.38</lombok.version>
-        <aws.sdk.version>2.36.1</aws.sdk.version> <!-- Updated AWS SDK version -->
+        <aws.sdk.version>2.25.31</aws.sdk.version>
+        <log4j.version>2.17.1</log4j.version> <!-- Using a known stable version -->
     </properties>
 
     <dependencyManagement>
@@ -29,7 +30,6 @@
     </dependencyManagement>
 
     <dependencies>
-        <!-- AWS Lambda -->
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-lambda-java-core</artifactId>
@@ -40,8 +40,22 @@
             <artifactId>aws-lambda-java-events</artifactId>
             <version>3.11.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-lambda-java-log4j2</artifactId>
+            <version>1.5.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
 
-        <!-- AWS SDK v2 -->
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>dynamodb</artifactId>
@@ -50,21 +64,16 @@
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>dynamodb-enhanced</artifactId>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/software.amazon.awssdk/dynamodb-enhanced -->
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>dynamodb-enhanced</artifactId>
             <version>2.35.11</version>
         </dependency>
-
-        <!-- JSON -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.8.9</version>
         </dependency>
-
-        <!-- Dagger -->
         <dependency>
             <groupId>com.google.dagger</groupId>
             <artifactId>dagger</artifactId>
@@ -75,8 +84,6 @@
             <artifactId>javax.inject</artifactId>
             <version>1</version>
         </dependency>
-
-        <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -87,19 +94,23 @@
 
     <build>
         <plugins>
-            <!-- Compiler Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>${maven.compiler.source}</source>
-                    <target>${maven.compiler.target}</target>
+                    <source>17</source>
+                    <target>17</target>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
                             <version>${lombok.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok-mapstruct-binding</artifactId>
+                            <version>0.2.0</version>
                         </path>
                         <path>
                             <groupId>com.google.dagger</groupId>
@@ -109,19 +120,12 @@
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
-
-            <!-- Shade Plugin for Uber JAR -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.2.4</version>
                 <configuration>
                     <createDependencyReducedPom>false</createDependencyReducedPom>
-                    <transformers>
-                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                            <mainClass>com.example.Main</mainClass>
-                        </transformer>
-                    </transformers>
                 </configuration>
                 <executions>
                     <execution>
