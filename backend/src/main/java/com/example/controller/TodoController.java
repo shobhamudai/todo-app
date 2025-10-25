@@ -1,7 +1,7 @@
 package com.example.controller;
 
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
-import com.example.model.Todo;
+import com.example.model.TodoBO;
 import com.example.service.TodoService;
 import com.google.gson.Gson;
 
@@ -27,12 +27,12 @@ public class TodoController {
     }
 
     public APIGatewayProxyResponseEvent addTodo(String json) {
-        Todo todo = gson.fromJson(json, Todo.class);
+        TodoBO todo = gson.fromJson(json, TodoBO.class);
         return createResponse(201, gson.toJson(todoService.addTodo(todo)));
     }
 
     public APIGatewayProxyResponseEvent updateTodo(String id, String json) {
-        Todo todo = gson.fromJson(json, Todo.class);
+        TodoBO todo = gson.fromJson(json, TodoBO.class);
         todoService.updateTodo(id, todo);
         return createResponse(200, gson.toJson(todo));
     }

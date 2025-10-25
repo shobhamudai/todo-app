@@ -1,75 +1,58 @@
 package com.example.dao;
 
-import com.example.model.Todo;
-import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
-import software.amazon.awssdk.services.dynamodb.model.*;
+import com.example.model.TodoBO;
+import com.example.model.TodoDto;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
+import software.amazon.awssdk.enhanced.dynamodb.Key;
+import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Singleton
 public class TodoDao {
 
-    private final DynamoDbClient dynamoDbClient;
-    private final String tableName = System.getenv("TABLE_NAME");
+    private final DynamoDbTable<TodoDto> todoTable;
 
     @Inject
-    public TodoDao(DynamoDbClient dynamoDbClient) {
-        this.dynamoDbClient = dynamoDbClient;
+    public TodoDao(DynamoDbEnhancedClient enhancedClient) {
+        this.todoTable = enhancedClient.table("todos", TableSchema.fromBean(TodoDto.class));
     }
 
-    public List<Todo> getAllTodos() {
-        ScanRequest scanRequest = ScanRequest.builder().tableName(tableName).build();
-        return dynamoDbClient.scan(scanRequest).items().stream()
-                .map(this::fromDynamoDbItem)
+    public List<TodoBO> getAllTodos() {
+        return todoTable.scan().items().stream()
+                .map(this::toBo)
                 .collect(Collectors.toList());
     }
 
-    public void addTodo(Todo todo) {
-        dynamoDbClient.putItem(PutItemRequest.builder()
-                .tableName(tableName)
-                .item(toDynamoDbItem(todo))
-                .build());
+    public void addTodo(TodoBO todo) {
+        todoTable.putItem(toDto(todo));
     }
 
-    public void updateTodo(String id, Todo todo) {
-        Map<String, AttributeValue> itemKey = new HashMap<>();
-        itemKey.put("id", AttributeValue.builder().s(id).build());
-
-        dynamoDbClient.updateItem(UpdateItemRequest.builder()
-                .tableName(tableName)
-                .key(itemKey)
-                .updateExpression("set completed = :c")
-                .expressionAttributeValues(Map.of(":c", AttributeValue.builder().bool(todo.isCompleted()).build()))
-                .build());
+    public void updateTodo(TodoBO todo) {
+        todoTable.updateItem(toDto(todo));
     }
 
     public void deleteTodo(String id) {
-        Map<String, AttributeValue> itemKey = new HashMap<>();
-        itemKey.put("id", AttributeValue.builder().s(id).build());
-        dynamoDbClient.deleteItem(DeleteItemRequest.builder()
-                .tableName(tableName)
-                .key(itemKey)
-                .build());
+        todoTable.deleteItem(Key.builder().partitionValue(id).build());
     }
 
-    private Map<String, AttributeValue> toDynamoDbItem(Todo todo) {
-        Map<String, AttributeValue> item = new HashMap<>();
-        item.put("id", AttributeValue.builder().s(todo.getId()).build());
-        item.put("task", AttributeValue.builder().s(todo.getTask()).build());
-        item.put("completed", AttributeValue.builder().bool(todo.isCompleted()).build());
-        return item;
+    private TodoDto toDto(TodoBO bo) {
+        TodoDto dto = new TodoDto();
+        dto.setId(bo.getId());
+        dto.setTask(bo.getTask());
+        dto.setCompleted(bo.isCompleted());
+        return dto;
     }
 
-    private Todo fromDynamoDbItem(Map<String, AttributeValue> item) {
-        return new Todo(
-                item.get("id").s(),
-                item.get("task").s(),
-                item.get("completed").bool()
+    private TodoBO toBo(TodoDto dto) {
+        return new TodoBO(
+                dto.getId(),
+                dto.getTask(),
+                dto.isCompleted()
         );
     }
 }

@@ -1,7 +1,7 @@
 package com.example.service;
 
 import com.example.dao.TodoDao;
-import com.example.model.Todo;
+import com.example.model.TodoBO;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -18,19 +18,20 @@ public class TodoService {
         this.todoDao = todoDao;
     }
 
-    public List<Todo> getAllTodos() {
+    public List<TodoBO> getAllTodos() {
         return todoDao.getAllTodos();
     }
 
-    public Todo addTodo(Todo todo) {
+    public TodoBO addTodo(TodoBO todo) {
         todo.setId(UUID.randomUUID().toString());
         todo.setCompleted(false);
         todoDao.addTodo(todo);
         return todo;
     }
 
-    public void updateTodo(String id, Todo todo) {
-        todoDao.updateTodo(id, todo);
+    public void updateTodo(String id, TodoBO todo) {
+        todo.setId(id);
+        todoDao.updateTodo(todo);
     }
 
     public void deleteTodo(String id) {

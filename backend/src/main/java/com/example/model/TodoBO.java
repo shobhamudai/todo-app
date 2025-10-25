@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Todo {
+public class TodoBO {
     private String id;
     private String task;
     private boolean completed;
