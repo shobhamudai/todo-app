@@ -42,6 +42,6 @@ Here is a summary of the commands for setting up and updating your application.
    2. Deploy the frontend to S3:
        * In the frontend directory, run: aws s3 sync build s3://{insert S3 bucket name here created during cdk deploy}
    3. Invalidate the CloudFront cache:
-       * Run: aws cloudfront create-invalidation --distribution-id {insert cloudfront distribution name here created during cdk deploy} --paths "/*"
-  Please replace the bucket name and distribution ID with the actual values from your CDK stack outputs if they are different.
+      * Run: aws cloudfront create-invalidation --distribution-id {insert cloudfront distribution name here created during cdk deploy} --paths "/*"
+      * Please replace the bucket name and distribution ID with the actual values from your CDK stack outputs if they are different.
 
