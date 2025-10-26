@@ -3,7 +3,7 @@ package com.example.controller;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.example.model.TodoBO;
 import com.example.service.TodoService;
-import com.google.gson.Gson;
+import com.example.util.SerializationUtility;
 import lombok.extern.log4j.Log4j2;
 
 import javax.inject.Inject;
@@ -16,30 +16,32 @@ import java.util.Map;
 public class TodoController {
 
     private final TodoService todoService;
-    private final Gson gson;
 
     @Inject
-    public TodoController(TodoService todoService, Gson gson) {
+    public TodoController(TodoService todoService) {
         this.todoService = todoService;
-        this.gson = gson;
-        log.info("TodoController initialized.");
     }
 
     public APIGatewayProxyResponseEvent getAllTodos() {
         log.info("Controller: Fetching all todos.");
-        return createResponse(200, gson.toJson(todoService.getAllTodos()));
+        String jsonBody = SerializationUtility.serialize(todoService.getAllTodos());
+        return createResponse(200, jsonBody);
     }
 
     public APIGatewayProxyResponseEvent addTodo(String json) {
         log.info("Controller: Adding new todo.");
-        TodoBO todo = gson.fromJson(json, TodoBO.class);
-        return createResponse(201, gson.toJson(todoService.addTodo(todo)));
+        TodoBO todo = SerializationUtility.deserialize(json, TodoBO.class);
+        TodoBO createdTodo = todoService.addTodo(todo);
+        String jsonBody = SerializationUtility.serialize(createdTodo);
+        return createResponse(201, jsonBody);
     }
 
     public APIGatewayProxyResponseEvent updateTodo(String id, String json) {
         log.info("Controller: Updating todo with ID: {}", id);
-        TodoBO todo = gson.fromJson(json, TodoBO.class);
-        return createResponse(200, gson.toJson(todoService.updateTodo(id, todo)));
+        TodoBO todo = SerializationUtility.deserialize(json, TodoBO.class);
+        TodoBO updatedTodo = todoService.updateTodo(id, todo);
+        String jsonBody = SerializationUtility.serialize(updatedTodo);
+        return createResponse(200, jsonBody);
     }
 
     public APIGatewayProxyResponseEvent deleteTodo(String id) {

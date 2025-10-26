@@ -6,7 +6,7 @@ import dagger.Component;
 import javax.inject.Singleton;
 
 @Singleton
-@Component(modules = {DynamoDbModule.class, GsonModule.class})
+@Component(modules = {DynamoDbModule.class})
 public interface TodoAppComponent {
 
     void inject(TodoHandler todoHandler);
