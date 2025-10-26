@@ -6,6 +6,7 @@ import lombok.extern.log4j.Log4j2;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,6 +31,7 @@ public class TodoService {
         log.info("Service: Adding new todo.");
         todo.setId(UUID.randomUUID().toString());
         todo.setCompleted(false);
+        todo.setCreatedAt(Instant.now().toEpochMilli());
         todoDao.addTodo(todo);
         return todo;
     }

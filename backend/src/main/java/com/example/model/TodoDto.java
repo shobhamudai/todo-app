@@ -16,6 +16,7 @@ public class TodoDto {
     private String id;
     private String task;
     private boolean completed;
+    private Long createdAt;
 
     @DynamoDbPartitionKey
     @DynamoDbAttribute("id")
@@ -31,5 +32,10 @@ public class TodoDto {
     @DynamoDbAttribute("completed")
     public boolean isCompleted() {
         return this.completed;
+    }
+
+    @DynamoDbAttribute("createdAt")
+    public Long getCreatedAt() {
+        return this.createdAt;
     }
 }
