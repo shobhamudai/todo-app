@@ -29,7 +29,9 @@ public class TodoDao {
 
     public List<TodoBO> getAllTodos() {
         log.info("DAO: Scanning for all todos.");
-        return todoMapper.toBoList(todoTable.scan().items().stream().toList());
+        final List<TodoBO> boList = todoMapper.toBoList(todoTable.scan().items().stream().toList());
+        log.info("Returning todos {}", boList);
+        return boList;
     }
 
     public void addTodo(TodoBO todo) {

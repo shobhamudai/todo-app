@@ -16,31 +16,33 @@ import java.util.Map;
 public class TodoController {
 
     private final TodoService todoService;
+    private final SerializationUtility serializationUtility;
 
     @Inject
-    public TodoController(TodoService todoService) {
+    public TodoController(TodoService todoService, SerializationUtility serializationUtility) {
         this.todoService = todoService;
+        this.serializationUtility = serializationUtility;
     }
 
     public APIGatewayProxyResponseEvent getAllTodos() {
         log.info("Controller: Fetching all todos.");
-        String jsonBody = SerializationUtility.serialize(todoService.getAllTodos());
+        String jsonBody = serializationUtility.serialize(todoService.getAllTodos());
         return createResponse(200, jsonBody);
     }
 
     public APIGatewayProxyResponseEvent addTodo(String json) {
         log.info("Controller: Adding new todo.");
-        TodoBO todo = SerializationUtility.deserialize(json, TodoBO.class);
+        TodoBO todo = serializationUtility.deserialize(json, TodoBO.class);
         TodoBO createdTodo = todoService.addTodo(todo);
-        String jsonBody = SerializationUtility.serialize(createdTodo);
+        String jsonBody = serializationUtility.serialize(createdTodo);
         return createResponse(201, jsonBody);
     }
 
     public APIGatewayProxyResponseEvent updateTodo(String id, String json) {
         log.info("Controller: Updating todo with ID: {}", id);
-        TodoBO todo = SerializationUtility.deserialize(json, TodoBO.class);
+        TodoBO todo = serializationUtility.deserialize(json, TodoBO.class);
         TodoBO updatedTodo = todoService.updateTodo(id, todo);
-        String jsonBody = SerializationUtility.serialize(updatedTodo);
+        String jsonBody = serializationUtility.serialize(updatedTodo);
         return createResponse(200, jsonBody);
     }
 

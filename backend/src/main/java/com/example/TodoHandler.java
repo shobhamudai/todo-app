@@ -47,7 +47,7 @@ public class TodoHandler implements RequestHandler<APIGatewayProxyRequestEvent, 
                 response = new APIGatewayProxyResponseEvent().withStatusCode(404).withBody("Not Found");
             }
             log.info("Sending response with status code: {}", response.getStatusCode());
-        } catch (Exception e) {
+        } catch (Throwable e) {
             log.error("An error occurred while processing the request", e);
             response = new APIGatewayProxyResponseEvent().withStatusCode(500).withBody("Internal Server Error");
         } finally {
