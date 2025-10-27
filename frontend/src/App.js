@@ -42,8 +42,8 @@ function App() {
 
     const formatTimestamp = (epoch) => {
         if (!epoch) return null;
-        // The backend is already providing milliseconds, so no multiplication is needed.
-        return new Date(epoch).toUTCString();
+        // Use toLocaleString() to display the date and time in the user's local timezone.
+        return new Date(epoch).toLocaleString();
     };
 
     return (

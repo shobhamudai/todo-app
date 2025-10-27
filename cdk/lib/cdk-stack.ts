@@ -25,6 +25,7 @@ export class CdkStack extends cdk.Stack {
       handler: 'com.example.TodoHandler::handleRequest',
       code: lambda.Code.fromAsset(path.join(__dirname, '../../backend/target/todo-backend-1.0.0.jar')),
       memorySize: 512,
+      timeout: cdk.Duration.seconds(15),
       environment: {
         TABLE_NAME: table.tableName,
       },
