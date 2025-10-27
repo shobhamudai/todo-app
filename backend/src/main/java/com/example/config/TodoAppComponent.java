@@ -1,6 +1,6 @@
 package com.example.config;
 
-import com.example.TodoHandler;
+import com.example.handler.TodoHandler;
 import dagger.Component;
 
 import javax.inject.Singleton;
