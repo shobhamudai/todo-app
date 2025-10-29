@@ -11,6 +11,7 @@ import com.example.util.LoggingContextManager;
 import lombok.extern.log4j.Log4j2;
 
 import javax.inject.Inject;
+import java.util.Map;
 
 @Log4j2
 public class TodoHandler implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
@@ -26,7 +27,16 @@ public class TodoHandler implements RequestHandler<APIGatewayProxyRequestEvent, 
     @Override
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent input, Context context) {
         LoggingContextManager.setAwsRequestId(context.getAwsRequestId());
-        log.info("Received request: {} {}", input.getHttpMethod(), input.getPath());
+
+        // Extract user identifier from the authorizer context
+        String userId = "unknown";
+        if (input.getRequestContext() != null && input.getRequestContext().getAuthorizer() != null) {
+            Map<String, Object> authorizerContext = input.getRequestContext().getAuthorizer();
+            userId = (String) authorizerContext.getOrDefault("sub", "unknown");
+            log.info ("AuthorizerContext: {}", authorizerContext);
+        }
+
+        log.info("User '{}' invoked: {} {}", userId, input.getHttpMethod(), input.getPath());
 
         APIGatewayProxyResponseEvent response;
         try {

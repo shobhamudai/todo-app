@@ -12,7 +12,7 @@
             <AppenderRef ref="CloudwatchLoggerStream"/>
         </Root>
 
-        <Logger name="com.example.controller"
+        <Logger name="com.example"
                 level="DEBUG"
                 additivity="false">
             <AppenderRef ref="CloudwatchLoggerStream"/>
