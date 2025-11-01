@@ -22,29 +22,33 @@ public class TodoService {
         log.info("TodoService initialized.");
     }
 
-    public List<TodoBO> getAllTodos() {
-        log.info("Service: Fetching all todos.");
-        return todoDao.getAllTodos();
+    public List<TodoBO> getAllTodos(String userId) {
+        log.info("Service: Fetching all todos for user ID: {}", userId);
+        return todoDao.getAllTodosByUserId(userId);
     }
 
-    public TodoBO addTodo(TodoBO todo) {
-        log.info("Service: Adding new todo.");
+    public TodoBO addTodo(String userId, TodoBO todo) {
+        log.info("Service: Adding new todo for user ID: {}", userId);
         todo.setId(UUID.randomUUID().toString());
+        todo.setUserId(userId);
         todo.setCompleted(false);
         todo.setCreatedAt(Instant.now().toEpochMilli());
         todoDao.addTodo(todo);
         return todo;
     }
 
-    public TodoBO updateTodo(String id, TodoBO todo) {
-        log.info("Service: Updating todo with ID: {}", id);
+    public TodoBO updateTodo(String userId, String id, TodoBO todo) {
+        log.info("Service: Updating todo with ID: {} for user ID: {}", id, userId);
+        // You should add a check here to ensure the todo being updated belongs to the user
         todo.setId(id);
+        todo.setUserId(userId);
         todoDao.updateTodo(todo);
         return todo;
     }
 
-    public void deleteTodo(String id) {
-        log.info("Service: Deleting todo with ID: {}", id);
+    public void deleteTodo(String userId, String id) {
+        log.info("Service: Deleting todo with ID: {} for user ID: {}", id, userId);
+        // You should add a check here to ensure the todo being deleted belongs to the user
         todoDao.deleteTodo(id);
     }
 }

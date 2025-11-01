@@ -5,9 +5,11 @@ import com.example.model.TodoBO;
 import com.example.model.TodoDto;
 import lombok.extern.log4j.Log4j2;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbIndex;
 import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
 import software.amazon.awssdk.enhanced.dynamodb.Key;
 import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
+import software.amazon.awssdk.enhanced.dynamodb.model.QueryConditional;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -17,6 +19,7 @@ import java.util.List;
 @Singleton
 public class TodoDao {
 
+    private static final String USER_ID_INDEX = "userId-index";
     private final DynamoDbTable<TodoDto> todoTable;
     private final TodoMapper todoMapper;
 
@@ -27,11 +30,11 @@ public class TodoDao {
         log.info("TodoDao initialized. Table name: {}", todoTable.tableName());
     }
 
-    public List<TodoBO> getAllTodos() {
-        log.info("DAO: Scanning for all todos.");
-        final List<TodoBO> boList = todoMapper.toBoList(todoTable.scan().items().stream().toList());
-        log.info("Returning todos {}", boList);
-        return boList;
+    public List<TodoBO> getAllTodosByUserId(String userId) {
+        log.info("DAO: Querying userId-index for todos for user ID: {}", userId);
+        DynamoDbIndex<TodoDto> userIndex = todoTable.index(USER_ID_INDEX);
+        QueryConditional queryConditional = QueryConditional.keyEqualTo(Key.builder().partitionValue(userId).build());
+        return todoMapper.toBoList(userIndex.query(queryConditional).stream().flatMap(page -> page.items().stream()).toList());
     }
 
     public void addTodo(TodoBO todo) {

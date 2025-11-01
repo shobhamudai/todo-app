@@ -20,6 +20,11 @@ export class CdkStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY, // NOT recommended for production code
     });
 
+    table.addGlobalSecondaryIndex({
+      indexName: 'userId-index',
+      partitionKey: { name: 'userId', type: dynamodb.AttributeType.STRING },
+    });
+
     // DynamoDB Table for Users
     const usersTable = new dynamodb.Table(this, 'UsersTable', {
       partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
@@ -104,7 +109,7 @@ export class CdkStack extends cdk.Stack {
     const authorizer = new apigateway.RequestAuthorizer(this, 'TodoAuthorizer', {
       handler: authLambda,
       identitySources: [apigateway.IdentitySource.header('Authorization')],
-      resultsCacheTtl: cdk.Duration.seconds(0), // Disable caching for testing
+      resultsCacheTtl: cdk.Duration.seconds(0),
     });
 
     const todos = api.root.addResource('todos');

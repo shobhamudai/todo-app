@@ -24,31 +24,31 @@ public class TodoController {
         this.serializationUtility = serializationUtility;
     }
 
-    public APIGatewayProxyResponseEvent getAllTodos() {
-        log.info("Controller: Fetching all todos.");
-        String jsonBody = serializationUtility.serialize(todoService.getAllTodos());
+    public APIGatewayProxyResponseEvent getAllTodos(String userId) {
+        log.info("Controller: Fetching all todos for user ID: {}", userId);
+        String jsonBody = serializationUtility.serialize(todoService.getAllTodos(userId));
         return createResponse(200, jsonBody);
     }
 
-    public APIGatewayProxyResponseEvent addTodo(String json) {
-        log.info("Controller: Adding new todo.");
+    public APIGatewayProxyResponseEvent addTodo(String userId, String json) {
+        log.info("Controller: Adding new todo for user ID: {}", userId);
         TodoBO todo = serializationUtility.deserialize(json, TodoBO.class);
-        TodoBO createdTodo = todoService.addTodo(todo);
+        TodoBO createdTodo = todoService.addTodo(userId, todo);
         String jsonBody = serializationUtility.serialize(createdTodo);
         return createResponse(201, jsonBody);
     }
 
-    public APIGatewayProxyResponseEvent updateTodo(String id, String json) {
-        log.info("Controller: Updating todo with ID: {}", id);
+    public APIGatewayProxyResponseEvent updateTodo(String userId, String id, String json) {
+        log.info("Controller: Updating todo with ID: {} for user ID: {}", id, userId);
         TodoBO todo = serializationUtility.deserialize(json, TodoBO.class);
-        TodoBO updatedTodo = todoService.updateTodo(id, todo);
+        TodoBO updatedTodo = todoService.updateTodo(userId, id, todo);
         String jsonBody = serializationUtility.serialize(updatedTodo);
         return createResponse(200, jsonBody);
     }
 
-    public APIGatewayProxyResponseEvent deleteTodo(String id) {
-        log.info("Controller: Deleting todo with ID: {}", id);
-        todoService.deleteTodo(id);
+    public APIGatewayProxyResponseEvent deleteTodo(String userId, String id) {
+        log.info("Controller: Deleting todo with ID: {} for user ID: {}", id, userId);
+        todoService.deleteTodo(userId, id);
         return createResponse(204, "");
     }
 
